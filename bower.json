@@ -1,0 +1,7 @@
+{
+  "name": "angular-phonegap-push-notification-ios-android",
+  "description": "AngularJS module for Android and iOS push notification services using Phonegap push notification plugin",
+  "main": "src/phonegapPushNotification.js",
+  "version": "0.0.1",
+  "dependencies": {}
+}
