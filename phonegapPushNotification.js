@@ -87,13 +87,13 @@ angular.module('phonegapPushNotification', [])
                     register : function(success,error,params){
                         if(ionic.Platform.isIOS())
                         {
-                            success("APNS-SAMPLE-ID-XXXXXXXXXXXXXXXXXXXXXXXXX");
+                            success("APNSSAMPLEIDXXXXXXXXXXXXXXXXXXXXXXXXX");
                         }
                         if (ionic.Platform.isAndroid()) {
                             success("");
                             var e = {
                                 event: "registered",
-                                regid: "GCM-XXXXXXXXXXXXXXXXXXXXXXXXX"
+                                regid: "GCMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                             }
                             $window.onNotificationGCMEvent(e);
                         };
