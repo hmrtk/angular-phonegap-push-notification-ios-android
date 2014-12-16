@@ -151,7 +151,7 @@ angular.module('phonegapPushNotification', [])
     errorHandlerForSettingBadge = function(){};
 
     var setIconBadge = function(badge){
-        pushNotificationPlugin.get().setApplicationIconBadgeNumber(successHandlerForSettingBadge, errorHandlerForSettingBadge, e.badge);
+        pushNotificationPlugin.get().setApplicationIconBadgeNumber(successHandlerForSettingBadge, errorHandlerForSettingBadge, badge);
     }
 
     var notificationHandler = function(e){
