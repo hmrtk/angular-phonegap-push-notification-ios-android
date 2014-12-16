@@ -107,7 +107,8 @@ angular.module('phonegapPushNotification', [])
     };
 }])
 
-.factory('GCMNotificationService', ['$rootScope', 'logger', 'deviceIdStorage', 'pushNotificationPlugin',function($rootScope, logger, deviceIdStorage, pushNotificationPlugin) {
+.factory('gcmNotificationService', ['$rootScope', 'logger', 'deviceIdStorage', 'pushNotificationPlugin',
+                            function($rootScope, logger, deviceIdStorage, pushNotificationPlugin) {
     var successHandlerForSettingBadge = function(result){},
     errorHandlerForSettingBadge = function(){};
 
@@ -126,11 +127,11 @@ angular.module('phonegapPushNotification', [])
                 break;
 
             case 'error':
-                logger.error('GCMNotificationService: handleNotification - GCM error = ' + e.msg);
+                logger.error('gcmNotificationService: handleNotification - GCM error = ' + e.msg);
                 break;
 
             default:
-                logger.error('GCMNotificationService: An unknown GCM event has occurred');
+                logger.error('gcmNotificationService: An unknown GCM event has occurred');
                 break;
         }
 
@@ -141,10 +142,17 @@ angular.module('phonegapPushNotification', [])
     };
 }])
 
-.factory('APNNotificationService', ['logger', '$rootScope', 'pushNotificationPlugin',function(logger, $rootScope, pushNotificationPlugin) {
+.factory('applePushNotificationService', ['logger', '$rootScope', 'pushNotificationPlugin', 
+                                    function(logger, $rootScope, pushNotificationPlugin) {
 
-    var successHandlerForSettingBadge = function(result){},
+    var successHandlerForSettingBadge = function(result){
+        logger.log("set application icon badge");
+    },
     errorHandlerForSettingBadge = function(){};
+
+    var setIconBadge = function(badge){
+        pushNotificationPlugin.get().setApplicationIconBadgeNumber(successHandlerForSettingBadge, errorHandlerForSettingBadge, e.badge);
+    }
 
     var notificationHandler = function(e){
         logger.log(JSON.stringify(e));
@@ -155,16 +163,18 @@ angular.module('phonegapPushNotification', [])
         }
         if ( e.badge )
         {
-            pushNotificationPlugin.get().setApplicationIconBadgeNumber(successHandlerForSettingBadge, errorHandlerForSettingBadge, e.badge);
+            setIconBadge(e.badge);
         }
     }
 
     return {
-        handleNotification: notificationHandler
+        handleNotification: notificationHandler,
+        setBadge: setIconBadge
     };
 }])
 
-.factory('GCMRegistrationService', ['logger', 'pushNotificationPlugin', function(logger, pushNotificationPlugin) {
+.factory('GCMRegistrationService', ['logger', 'pushNotificationPlugin', 
+                            function(logger, pushNotificationPlugin) {
 
     return {      
         registerOnGCM: function(gcmProjectNumber) {
@@ -193,7 +203,7 @@ angular.module('phonegapPushNotification', [])
 }])
 
 .factory('APNRegistrationService', ['logger', 'deviceIdStorage', 'pushNotificationPlugin', 
-    function(logger, deviceIdStorage, pushNotificationPlugin) {
+                                function(logger, deviceIdStorage, pushNotificationPlugin) {
 
         return {
             registerOnAPN: function() {
@@ -226,17 +236,17 @@ angular.module('phonegapPushNotification', [])
     };
 }])
 
-.factory('PushNotificationService',['$rootScope', '$window', 'deviceIdStorage', 'GCMNotificationService', 'APNNotificationService', 'logger', 'GCMRegistrationService', 'APNRegistrationService',
-    function($rootScope, $window, deviceIdStorage, GCMNotificationService, APNNotificationService, logger, GCMRegistrationService, APNRegistrationService){
+.factory('PushNotificationService',['$rootScope', '$window', 'deviceIdStorage', 'gcmNotificationService', 'applePushNotificationService', 'logger', 'GCMRegistrationService', 'APNRegistrationService',
+    function($rootScope, $window, deviceIdStorage, gcmNotificationService, applePushNotificationService, logger, GCMRegistrationService, APNRegistrationService){
         var alreadyRegisteredOnGCM = false;
         var alreadyRegisteredOnAPN = false;
 
         var listenOnGCMNotificationEvent = function(){
-            $window.onNotificationGCMEvent = GCMNotificationService.handleNotification;  
+            $window.onNotificationGCMEvent = gcmNotificationService.handleNotification;  
         } 
 
         var listenOnAPNSNotificationEvent = function(){
-            $window.onNotificationAPNEvent = APNNotificationService.handleNotification; 
+            $window.onNotificationAPNEvent = applePushNotificationService.handleNotification; 
         }
 
         return {   
@@ -272,6 +282,9 @@ angular.module('phonegapPushNotification', [])
             },
             handlePushNotification : function(callback){
                 $rootScope.$on('receivedPushNotification', function(event, data) { callback(data); });
+            },
+            setIosIconBadge : function(badgeNumber){
+                applePushNotificationService.setBadge(badgeNumber);
             } 
         } 
     }])
