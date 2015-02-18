@@ -1,6 +1,6 @@
 {
   "name": "angular-phonegap-push-notification-ios-android",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "dependencies": {},
   "devDependencies" : {}
 }

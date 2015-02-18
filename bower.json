@@ -5,7 +5,7 @@
     "hmrtk <hamid@tavakoli.me>"
   ],
   "main": "phonegapPushNotification.js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "ignore": [
     ".jshintrc",
     ".editorconfig",
